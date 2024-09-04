@@ -1,0 +1,48 @@
+<server>
+    <featureManager>
+	    <feature>sessionCache-1.0</feature> 
+    </featureManager>
+
+    <!--<logging traceSpecification="com.ibm.ws.webcontainer.security.internal.JCacheLoggedOutCookieCache=all:jcache=all"/>-->
+
+    <!--  
+        Library to use when running Infinispan or Datagrid remotely.
+     -->
+    <library id="DatagridLib">
+	    <fileset dir="${server.config.dir}/datagrid" includes="*.jar"/>
+    </library>
+
+    <!--  
+        Configure the CachingProvider and CacheManager.
+     -->
+    <cacheManager id="CacheManager">
+      <properties
+	infinispan.client.hotrod.uri="hotrod://${INFINISPAN_USER}:${INFINISPAN_PASS}@${INFINISPAN_HOST}:${INFINISPAN_PORT}"
+	infinispan.client.hotrod.auth_realm="default"
+        infinispan.client.hotrod.auth_server_name="infinispan"
+        infinispan.client.hotrod.java_serial_allowlist=".*"
+        infinispan.client.hotrod.marshaller="org.infinispan.commons.marshall.JavaSerializationMarshaller"
+        infinispan.client.hotrod.sasl_mechanism="DIGEST-MD5"
+        infinispan.client.hotrod.sni_host_name="datagrid.guide-sec.svc"
+        infinispan.client.hotrod.trust_store_path="/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+        infinispan.client.hotrod.cache.AuthCache.configuration_uri="file:///config/datagrid/AuthCache.xml"
+        infinispan.client.hotrod.cache.LoggedOutCookieCache.configuration_uri="file:///config/datagrid/LoggedOutCookieCache.xml"/>
+
+      <cachingProvider providerClass="org.infinispan.jcache.remote.JCachingProvider" jCacheLibraryRef="DatagridLib" />
+    </cacheManager>
+
+
+    <!-- 
+        Configure the JCache instances.
+     -->
+    <!--comment out AuthCache and LoggedOutCookieCache temporary bc of defect -->
+    <cache id="LoggedOutCookieCache" name="LoggedOutCookieCache" cacheManagerRef="CacheManager"/>
+    <cache id="AuthCache" name="AuthCache" cacheManagerRef="CacheManager"/>
+    <httpSessionCache cacheManagerRef="CacheManager" cacheSeparator="_"/>
+    <!-- 
+        Configure the authentication cache and the logged out cookie cache to use
+        the JCache instances.
+     -->
+    <authCache cacheRef="AuthCache"/>
+    <webAppSecurity loggedOutCookieCacheRef="LoggedOutCookieCache"/>
+</server>

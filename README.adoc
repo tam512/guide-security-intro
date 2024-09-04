@@ -1,3 +1,39 @@
+This repo was forked from https://github.com/OpenLiberty/guide-security-intro[OpenLiberty/guide-security-intro] and added the more configurations so that the application can be run in a container and can be used to test sessionCache with Liberty InstantOn using DataGrid/Infinispan as a https://openliberty.io/docs/latest/configuring-infinispan-support.html[JCache provider].
+
+Compile source to produce `target/guide-security-intro.war` (mvn clean package)
+
+Notes:
+
+1. When building the application image, you can override the ARG values in the Containerfile by passing `--build-arg` parameter in _podman build_ command.  For example, `--build-arg BASE_IMAGE="icr.io/appcafe/websphere-liberty:full-java11-openj9-ubi" FULL_IMAGE="false"` 
+
+2. When building InstantOn checkpoint image, make sure your machine meet the system requirements https://openliberty.io/docs/latest/instanton.html#prereq[listed here] such as Linux operating system with kernel version 5.9 or greater. 
+
+To build and run the guide-security-intro in a container: 
+```
+podman build -t guide-security -f Containerfile .
+podman run --name guide-security-intro guide-security
+```
+
+To build and run InstantOn guide-security-intro application:
+```
+podman build -t guide-security:checkpoint --cap-add=CHECKPOINT_RESTORE --cap-add=SYS_PTRACE --cap-add=SETPCAP --security-opt seccomp=unconfined -f Containerfile-ckpt .
+podman run --rm --cap-add=CHECKPOINT_RESTORE --cap-add=SETPCAP --security-opt seccomp=./criuRequiredSysCalls.json -p 9080 -p 9443 --name guide-security-intro guide-security:checkpoint
+```
+
+To build an InstantOn checkpoint application image with Data Grid:
+
+Note that the infinispan version in the Containerfile-datagrid might need to be updated depending on the infinispan version installed on your OCP cluster.  This app image needs to be restored/deployed on an OCP where there is Red Hat Data Grid operator installed.
+```
+podman build -t guide-security:ckpt-dg --cap-add=CHECKPOINT_RESTORE --cap-add=SYS_PTRACE --cap-add=SETPCAP --security-opt seccomp=unconfined -f Containerfile-datagrid .
+```
+
+To build a checkpoint application container image and Datagrid with Java21 (there is no yum in Liberty Java21 container image so using microdnf instead)
+
+```
+podman build -t guide-security:ckpt-dg-java21 --cap-add=CHECKPOINT_RESTORE --cap-add=SYS_PTRACE --cap-add=SETPCAP --security-opt seccomp=unconfined -f Containerfile-datagrid-j21 .
+```
+//==============================================================
+
 // Copyright (c) 2017, 2023 IBM Corporation and others.
 // Licensed under Creative Commons Attribution-NoDerivatives
 // 4.0 International (CC BY-ND 4.0)

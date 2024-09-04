@@ -18,6 +18,7 @@
 
   <!-- tag::location[] -->
   <include location="userRegistry.xml"/>
+  <include location="datagrid.xml"/>
   <!-- end::location[]-->
 
   <application location="guide-security-intro.war" type="war"
