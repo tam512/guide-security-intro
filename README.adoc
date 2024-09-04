@@ -1,4 +1,4 @@
-This repo was forked from https://github.com/OpenLiberty/guide-security-intro[OpenLiberty/guide-security-intro] and added the more configurations so that the application can be run in a container and can be used to test sessionCache with Liberty InstantOn using DataGrid/Infinispan as a https://openliberty.io/docs/latest/configuring-infinispan-support.html[JCache provider].
+This repo was forked from https://github.com/OpenLiberty/guide-security-intro[OpenLiberty/guide-security-intro] and more configurations were added so that the application can be run in a container and can be used to test sessionCache with Liberty InstantOn using DataGrid/Infinispan as a https://openliberty.io/docs/latest/configuring-infinispan-support.html[JCache provider].
 
 Compile source to produce `target/guide-security-intro.war` (mvn clean package)
 
