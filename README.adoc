@@ -8,6 +8,9 @@ Notes:
 
 2. When building InstantOn checkpoint image, make sure your machine meet the system requirements https://openliberty.io/docs/latest/instanton.html#prereq[listed here] such as Linux operating system with kernel version 5.9 or greater. 
 
+```
+cd finish
+```
 To build and run the guide-security-intro in a container: 
 ```
 podman build -t guide-security -f Containerfile .
